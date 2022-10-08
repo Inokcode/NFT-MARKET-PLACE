@@ -85,7 +85,7 @@ const CreateNFT = () => {
             inputType="input"
             title="Name"
             placeholder="NFT Name"
-            handleClick={() => setFormInput()}
+            handleClick={(e) => setFormInput()}
           />
           <Input
             inputType="textarea"
