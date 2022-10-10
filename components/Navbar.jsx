@@ -2,14 +2,17 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import images from "../assets";
+import { NFTContext } from "../context/NFTContext";
 import { Button } from "./";
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [active, setActive] = useState("Explore NFTs");
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  //
+
   //
   const MenuItem = ({ isMobile, active, setActive }) => {
     const generateLink = (i) => {
@@ -50,8 +53,10 @@ const Navbar = () => {
   };
   //
   const ButtonGroup = ({ setActive, router }) => {
-    const hasConnected = true;
-    return hasConnected ? (
+    const { connectWallet, currentAccount } = useContext(NFTContext);
+    //
+    // const hasConnected = true;
+    return currentAccount ? (
       <Button
         btnName="Create"
         classStyles="mx-2 rounded-xl"
@@ -64,7 +69,7 @@ const Navbar = () => {
       <Button
         btnName="Connect"
         classStyles="mx-2 rounded-xl"
-        handleClick={() => {}}
+        handleClick={connectWallet}
       />
     );
   };
