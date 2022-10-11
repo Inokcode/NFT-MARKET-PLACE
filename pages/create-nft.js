@@ -1,21 +1,36 @@
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import images from "../assets";
 import { Button, Input } from "../components";
+import { NFTContext } from "../context/NFTContext";
 
 const CreateNFT = () => {
+  const { uploadTOIPFS } = useContext(NFTContext);
+  //
   const [fileUrl, setFileUrl] = useState(null);
   const [formInput, setFormInput] = useState({
     price: "",
     name: "",
     description: "",
   });
+  //
+  const handleChange = (e) => {
+    setFormInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    // setFormInput({ ...formInput, [e.target.name]: e.target.value });
+  };
+  // console.log(formInput);
+  //
   const { theme } = useTheme();
   //
-  const onDrop = useCallback(() => {
+  const onDrop = useCallback(async (acceptedFile) => {
+    // console.log({ acceptedFile });
     //upload image to the ipfs
+    const url = await uploadTOIPFS(acceptedFile[0]);
+    console.log({ url });
+    setFileUrl(url);
+    // console.log({ url });
   }, []);
 
   //
@@ -35,6 +50,7 @@ const CreateNFT = () => {
       ${isDragReject && "border-file-reject"}`,
     [isDragActive, isDragAccept, isDragReject]
   );
+  //
   //
   return (
     <div className="flex justify-center sm:px-4 p-12">
@@ -85,19 +101,22 @@ const CreateNFT = () => {
             inputType="input"
             title="Name"
             placeholder="NFT Name"
-            handleClick={(e) => setFormInput()}
+            name="name"
+            handleClick={handleChange}
           />
           <Input
             inputType="textarea"
             title="Description"
+            name="description"
             placeholder="NFT Description"
-            handleClick={() => {}}
+            handleClick={handleChange}
           />
           <Input
             inputType="number"
             title="Price"
+            name="price"
             placeholder="NFT Price"
-            handleClick={() => {}}
+            handleClick={handleChange}
           />
           <div className="mt-7 w-full flex justify-end">
             <Button
