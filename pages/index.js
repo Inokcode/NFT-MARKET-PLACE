@@ -1,11 +1,12 @@
 // import Head from "next/head";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Banner, CreatorCard, NFTCard } from "../components";
 // import styles from '../styles/Home.module.css'
 import images from "../assets";
 import { makeId } from "../utils/makeId";
 import { useTheme } from "next-themes";
+import { NFTContext } from "../context/NFTContext";
 
 // export default function Home() {
 //   return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
@@ -16,6 +17,12 @@ const HOME = () => {
   const parentRef = useRef();
   const scrollRef = useRef();
   const { theme } = useTheme();
+  //
+  const { fetchNFTs } = useContext(NFTContext);
+  useEffect(() => {
+    fetchNFTs().then(() => {});
+  }, []);
+
   //
   const isScrollable = () => {
     const { current } = scrollRef;
