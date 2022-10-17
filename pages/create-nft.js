@@ -31,7 +31,7 @@ const CreateNFT = () => {
     // console.log({ acceptedFile });
     //upload image to the ipfs
     const url = await uploadTOIPFS(acceptedFile[0]);
-    console.log({ url });
+    // console.log({ url });
     setFileUrl(url);
     // console.log({ url });
   }, []);
@@ -125,7 +125,7 @@ const CreateNFT = () => {
             <Button
               btnName="Create NFT"
               className="rounded-xl"
-              handleClick={() => createNFT(formInput.fileUrl.router)}
+              handleClick={() => createNFT(formInput, fileUrl, router)}
             />
           </div>
         </div>

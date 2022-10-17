@@ -43,7 +43,7 @@ export const NFTProvider = ({ children }) => {
   };
   useEffect(() => {
     checkIfWalletIsConnected();
-    createSale("test", "0.025");
+    // createSale("test", "0.025");
   }, []);
   //
   const connectWallet = async () => {
@@ -72,12 +72,14 @@ export const NFTProvider = ({ children }) => {
     if (!name || !description || !price || !fileUrl) return;
     const data = JSON.stringify({ name, description, image: fileUrl });
     try {
-      const added = await client.add({ content: file });
+      const added = await client.add(data);
       const url = `${subdomain}/ipfs/${added.path}`;
       await createSale(url, price);
       router.push("/");
     } catch (error) {
+      console.log("oppss");
       console.log("Error uploading file to IPFS");
+      console.log(error);
     }
   };
 
@@ -93,15 +95,42 @@ export const NFTProvider = ({ children }) => {
     const transaction = await contract.createToken(url, price, {
       value: listingPrice.toString(),
     });
-    console.log({ contract });
+
     await transaction.wait();
+    console.log({ contract });
   };
   //
   const fetchNFTs = async () => {
     const provider = new ethers.providers.JsonRpcProvider();
     const contract = fetchContract(provider);
     const data = await contract.fetchMarketItems();
-    // console.log(data);
+    console.log(data);
+
+    const items = await Promise.all(
+      data.map(async ({ tokenId, seller, owner, price: unformattedPrice }) => {
+        const tokenURI = await contract.tokenURI(tokenId);
+        // console.log({ tokenURI });
+        const {
+          data: { image, name, description },
+        } = await axios.get(tokenURI);
+        const price = ethers.utils.formatUnits(
+          unformattedPrice.toString(),
+          "ether"
+        );
+        return {
+          price,
+          tokenId: tokenId.toNumber(),
+          seller,
+          owner,
+          image,
+          name,
+          description,
+          tokenURI,
+        };
+      })
+    );
+
+    return items;
   };
   //
   return (

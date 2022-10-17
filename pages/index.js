@@ -17,10 +17,14 @@ const HOME = () => {
   const parentRef = useRef();
   const scrollRef = useRef();
   const { theme } = useTheme();
+  const [nfts, setNfts] = useState([]);
   //
   const { fetchNFTs } = useContext(NFTContext);
   useEffect(() => {
-    fetchNFTs().then(() => {});
+    fetchNFTs().then((items) => {
+      setNfts(items);
+      console.log(items);
+    });
   }, []);
 
   //
@@ -118,7 +122,10 @@ const HOME = () => {
             <div>SearchBar</div>
           </div>
           <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+            {nfts.map((nft) => (
+              <NFTCard key={nft.tokenId} nft={nft} />
+            ))}
+            {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
               <NFTCard
                 key={`nft-${i}`}
                 nft={{
@@ -130,7 +137,7 @@ const HOME = () => {
                   description: "Cool NFT on Sale",
                 }}
               />
-            ))}
+            ))} */}
           </div>
         </div>
       </div>
